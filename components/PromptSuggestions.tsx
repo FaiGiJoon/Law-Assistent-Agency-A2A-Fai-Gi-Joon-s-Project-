@@ -1,9 +1,9 @@
 import React from 'react';
+import { useTranslations, Language } from '../lib/i18n';
 
 interface PromptSuggestion {
   title: string;
   prompt: string;
-  // FIX: Use React.ReactElement to avoid issues with JSX namespace resolution.
   icon: React.ReactElement;
 }
 
@@ -30,27 +30,31 @@ const FamilyCourtIcon = () => (
     </svg>
 );
 
-const suggestions: PromptSuggestion[] = [
+const getSuggestions = (t: any): PromptSuggestion[] => [
   {
-    title: 'Car Accidents & Healthcare',
-    prompt: "I'm an older person and I need information about my rights and the procedures to follow after a car accident in the Netherlands, especially concerning healthcare.",
+    title: t.suggestion1Title,
+    prompt: t.suggestion1Prompt,
     icon: <CarAccidentIcon />,
   },
   {
-    title: 'Family Court for Parents',
-    prompt: "I am a parent who needs to go to court for a child-related matter. What are the essential first steps and legal concepts I should understand about family court in the Netherlands?",
+    title: t.suggestion2Title,
+    prompt: t.suggestion2Prompt,
     icon: <FamilyCourtIcon />,
   },
 ];
 
 interface PromptSuggestionsProps {
   onPromptClick: (prompt: string) => void;
+  lang: Language;
 }
 
-const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptClick }) => {
+const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptClick, lang }) => {
+  const t = useTranslations(lang);
+  const suggestions = getSuggestions(t);
+
   return (
     <div>
-        <h3 className="text-center text-slate-400 mb-4 text-sm font-medium">Or start with a common topic:</h3>
+        <h3 className="text-center text-slate-400 mb-4 text-sm font-medium">{t.suggestionsTitle}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
             {suggestions.map((suggestion, index) => (
                 <button

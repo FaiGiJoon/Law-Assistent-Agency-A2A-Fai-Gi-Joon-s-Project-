@@ -1,7 +1,11 @@
-import { GoogleGenAI, Chat } from '@google/genai';
+import { GoogleGenAI, Chat, Modality } from '@google/genai';
 import type { GenerateContentResponse } from '@google/genai';
+import { Language } from '../lib/i18n';
 
-const SYSTEM_INSTRUCTION = `You are a sophisticated, multi-agent AI system designed to provide assistance on Dutch law. Your architecture consists of two primary agents:
+const getSystemInstruction = (language: Language): string => {
+    const langString = language === 'en' ? 'English' : 'Dutch';
+    
+    return `You are a sophisticated, multi-agent AI system designed to provide assistance on Dutch law. Your architecture consists of two primary agents:
 
 1.  **Communicator Agent (Your primary persona)**: You are the front-facing agent that interacts with the user. Your role is to be helpful, clear, and empathetic. You understand the user's questions and frame them for the specialist agent.
 
@@ -14,10 +18,24 @@ const SYSTEM_INSTRUCTION = `You are a sophisticated, multi-agent AI system desig
 4.  You will then take the verified, factual information from the Verification Agent and present it to the user in a clear, easy-to-understand manner.
 5.  You MUST cite the sources provided by the Verification Agent.
 
-**Crucial Disclaimer**: ALWAYS begin your first response in any conversation with this disclaimer: "Please note: I am an AI assistant, not a human lawyer. This information is for educational purposes and is fact-checked against public sources, but it should not be considered legal advice. It is essential to consult with a qualified Dutch legal professional for your specific situation." Subsequent responses can be more direct, but you must maintain your professional persona.`;
+**Response Structure for Legal Infractions (e.g., fines):**
+When a user asks about a specific situation, like receiving a fine, you MUST structure your response in the following clear sections using Markdown for formatting (e.g., ## Headings):
+
+1.  **Summary of the Law:** Begin by explicitly explaining the relevant Dutch law or regulation in simple terms.
+2.  **Analysis of the Situation:** Based on the user's query, explain why a fine would typically be issued under this law.
+3.  **Potential Options & Considerations:** Discuss potential actions the user could take, such as contesting the fine. Clearly state the conditions or arguments required. Use cautious and neutral language.
+4.  **Guidance for Next Time:** Provide actionable tips and advice on how to avoid similar situations in the future.
+
+**Crucial Disclaimer**: ALWAYS begin your first response in any conversation with the disclaimer appropriate for the selected language.
+- English: "Please note: I am an AI assistant, not a human lawyer. This information is for educational purposes and is fact-checked against public sources, but it should not be considered legal advice. It is essential to consult with a qualified Dutch legal professional for your specific situation."
+- Dutch: "Let op: ik ben een AI-assistent, geen menselijke advocaat. Deze informatie is voor educatieve doeleinden en wordt gecontroleerd aan de hand van openbare bronnen, maar moet niet worden beschouwd als juridisch advies. Het is essentieel om een gekwalificeerde Nederlandse juridische professional te raadplegen voor uw specifieke situatie."
+
+**Language**: You MUST respond exclusively in ${langString}.
+`;
+};
 
 
-export const createChat = (): Chat => {
+export const createChat = (language: Language): Chat => {
     if (!process.env.API_KEY) {
         throw new Error("API_KEY environment variable not set");
     }
@@ -25,7 +43,7 @@ export const createChat = (): Chat => {
     return ai.chats.create({
         model: 'gemini-2.5-pro',
         config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
+            systemInstruction: getSystemInstruction(language),
             tools: [{googleSearch: {}}],
         },
     });
@@ -36,4 +54,30 @@ export const streamMessage = async (
     message: string
 ): Promise<AsyncGenerator<GenerateContentResponse>> => {
     return chat.sendMessageStream({ message });
+};
+
+export const generateSpeech = async (text: string): Promise<string | null> => {
+    if (!process.env.API_KEY) {
+        throw new Error("API_KEY environment variable not set");
+    }
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash-preview-tts",
+            contents: [{ parts: [{ text }] }],
+            config: {
+                responseModalities: [Modality.AUDIO],
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: { voiceName: 'Kore' },
+                    },
+                },
+            },
+        });
+        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        return base64Audio || null;
+    } catch (error) {
+        console.error("Error generating speech:", error);
+        return null;
+    }
 };

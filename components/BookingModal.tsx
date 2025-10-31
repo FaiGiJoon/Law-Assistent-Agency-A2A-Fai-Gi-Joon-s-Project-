@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { VirtualAgent } from '../types';
+import { useTranslations, Language } from '../lib/i18n';
 
 interface BookingModalProps {
     isOpen: boolean;
     onClose: () => void;
+    lang: Language;
 }
 
 type BookingStep = 'selection' | 'confirmation' | 'success';
@@ -15,7 +17,7 @@ const CarAccidentIcon = () => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12H6m12 0h1.5" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M7 12V9.5a2.5 2.5 0 012.5-2.5h5A2.5 2.5 0 0117 9.5V12" />
         <circle cx="8" cy="18" r="1.5" />
-        <circle cx="16" cy="18" r="1.5" />
+        <circle cx="16"cy="18" r="1.5" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 8l-2-2m2 2l-2 2" />
     </svg>
 );
@@ -38,31 +40,33 @@ const CheckCircleIcon = () => (
     </svg>
 );
 
-const VIRTUAL_AGENTS: VirtualAgent[] = [
+const getVirtualAgents = (t: any): VirtualAgent[] => [
     {
         id: 'car-health',
-        name: 'Car Accident & Healthcare Agent',
-        description: 'Specializes in traffic law, insurance claims, and related healthcare rights.',
+        name: t.agent1Name,
+        description: t.agent1Desc,
         icon: <CarAccidentIcon />,
     },
     {
         id: 'family-court',
-        name: 'Family Court Agent',
-        description: 'Specializes in child custody, divorce proceedings, and youth law.',
+        name: t.agent2Name,
+        description: t.agent2Desc,
         icon: <FamilyCourtIcon />,
     },
 ];
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
+const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) => {
     const [step, setStep] = useState<BookingStep>('selection');
     const [selectedAgent, setSelectedAgent] = useState<VirtualAgent | null>(null);
+    const t = useTranslations(lang);
+    const VIRTUAL_AGENTS = getVirtualAgents(t);
 
     const handleClose = useCallback(() => {
         onClose();
         setTimeout(() => {
             setStep('selection');
             setSelectedAgent(null);
-        }, 300); // Reset state after transition
+        }, 300);
     }, [onClose]);
     
     useEffect(() => {
@@ -84,7 +88,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
     };
 
     const handleConfirm = () => {
-        // Simulate booking
         setStep('success');
     };
 
@@ -93,8 +96,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
             case 'selection':
                 return (
                     <>
-                        <h2 className="text-2xl font-bold text-center text-white">Book a Virtual Consultation</h2>
-                        <p className="text-slate-400 text-center mt-2 mb-6">Select a specialized agent for your needs.</p>
+                        <h2 className="text-2xl font-bold text-center text-white">{t.modalTitle}</h2>
+                        <p className="text-slate-400 text-center mt-2 mb-6">{t.modalSubtitle}</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {VIRTUAL_AGENTS.map(agent => (
                                 <button
@@ -114,16 +117,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
                 if (!selectedAgent) return null;
                 return (
                      <>
-                        <h2 className="text-2xl font-bold text-center text-white">Confirm Your Appointment</h2>
+                        <h2 className="text-2xl font-bold text-center text-white">{t.confirmTitle}</h2>
                         <div className="bg-slate-700/60 p-6 rounded-lg my-6 text-center">
                              <div className="text-emerald-400 flex justify-center">{selectedAgent.icon}</div>
                              <h3 className="font-semibold text-slate-100 mt-4 text-lg">{selectedAgent.name}</h3>
                              <p className="text-sm text-slate-400 mt-1">{selectedAgent.description}</p>
                         </div>
-                        <p className="text-slate-400 text-center text-sm">You are booking a virtual consultation. This is a simulated appointment for demonstration purposes.</p>
+                        <p className="text-slate-400 text-center text-sm">{t.confirmNotice}</p>
                         <div className="flex justify-center space-x-4 mt-6">
-                            <button onClick={() => setStep('selection')} className="bg-slate-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-slate-500 transition-colors">Back</button>
-                            <button onClick={handleConfirm} className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Confirm</button>
+                            <button onClick={() => setStep('selection')} className="bg-slate-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-slate-500 transition-colors">{t.backButton}</button>
+                            <button onClick={handleConfirm} className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-500 transition-colors">{t.confirmButton}</button>
                         </div>
                     </>
                 );
@@ -131,11 +134,11 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
                 return (
                     <div className="text-center">
                         <CheckCircleIcon />
-                        <h2 className="text-2xl font-bold text-center text-white mt-4">Appointment Confirmed!</h2>
-                        <p className="text-slate-400 mt-2">Your virtual consultation with the <span className="font-semibold text-slate-200">{selectedAgent?.name}</span> has been successfully scheduled.</p>
-                        <p className="text-xs text-slate-500 mt-4">(This is a demonstration. No real appointment has been made.)</p>
+                        <h2 className="text-2xl font-bold text-center text-white mt-4">{t.successTitle}</h2>
+                        <p className="text-slate-400 mt-2">{t.successMessage.replace('{agentName}', selectedAgent?.name || '')}</p>
+                        <p className="text-xs text-slate-500 mt-4">{t.successNotice}</p>
                         <button onClick={handleClose} className="mt-6 bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-500 transition-colors">
-                            Close
+                            {t.closeButton}
                         </button>
                     </div>
                 );

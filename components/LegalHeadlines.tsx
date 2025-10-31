@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations, Language } from '../lib/i18n';
 
 interface Headline {
   title: string;
@@ -14,31 +15,34 @@ const NewspaperIcon = () => (
     </svg>
 );
 
-
-const headlines: Headline[] = [
+const getHeadlines = (t: any): Headline[] => [
   {
-    title: 'New Rental Laws in Amsterdam: What Tenants Need to Know',
-    prompt: 'Can you explain the new rental laws for the private sector that were recently implemented in Amsterdam?',
+    title: t.headline1Title,
+    prompt: t.headline1Prompt,
   },
   {
-    title: 'Rise in Online Scams: How to Protect Yourself Legally',
-    prompt: 'What are my legal options in the Netherlands if I become a victim of an online scam?',
+    title: t.headline2Title,
+    prompt: t.headline2Prompt,
   },
   {
-    title: "Debate on 'Box 3' Wealth Tax Continues: What's the Latest?",
-    prompt: "What is the current status of the 'Box 3' wealth tax in the Netherlands and what are the proposed changes?",
+    title: t.headline3Title,
+    prompt: t.headline3Prompt,
   },
 ];
 
 interface LegalHeadlinesProps {
   onPromptClick: (prompt: string) => void;
+  lang: Language;
 }
 
-const LegalHeadlines: React.FC<LegalHeadlinesProps> = ({ onPromptClick }) => {
+const LegalHeadlines: React.FC<LegalHeadlinesProps> = ({ onPromptClick, lang }) => {
+  const t = useTranslations(lang);
+  const headlines = getHeadlines(t);
+
   return (
     <div className="max-w-2xl mx-auto">
       <h3 className="text-center text-slate-300 mb-4 text-sm font-semibold tracking-wide">
-        Trending Legal Topics in The Netherlands
+        {t.headlinesTitle}
       </h3>
       <div className="space-y-3">
         {headlines.map((headline, index) => (

@@ -1,5 +1,7 @@
 {
   "name": "Dutch Law AI Legal Assistant",
   "description": "An AI-powered legal assistant specialized in Dutch law. It provides information and answers questions, acting as a preliminary resource for legal inquiries in the Netherlands. This is not a substitute for professional legal advice.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }
