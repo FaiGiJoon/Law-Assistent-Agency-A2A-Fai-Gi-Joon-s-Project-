@@ -17,3 +17,9 @@ schedule:
    interval: "daily"
 # Limit the number of open PR's to avoid noise
 open-pull-reqeits-limit: 5
+
+# Maintain Python dependencies 
+- package-ecosystem: "pip"
+  directory: "/"
+  schedule:
+     interval: "weekly" 
