@@ -22,4 +22,19 @@ open-pull-reqeits-limit: 5
 - package-ecosystem: "pip"
   directory: "/"
   schedule:
-     interval: "weekly" 
+     interval: "weekly"
+
+# Maintain TypeScript/JavaScript dependencies (npm, yarn, or pnpm)
+  - package-ecosystem: "npm" 
+    directory: "/"
+    schedule:
+      interval: "daily"
+    # Groups minor updates together to reduce PR noise
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 10
