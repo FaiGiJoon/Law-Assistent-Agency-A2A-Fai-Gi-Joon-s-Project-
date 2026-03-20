@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '../types';
 import { MessageRole } from '../types';
 
@@ -43,6 +44,24 @@ const SourceIcon = () => (
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
     </svg>
 );
+
+const ChecklistItem: React.FC<{ children: React.ReactNode; checked: boolean }> = ({ children, checked }) => {
+    const [isChecked, setIsChecked] = React.useState(checked);
+    return (
+        <div className="flex items-start space-x-3 my-2 group cursor-pointer" onClick={() => setIsChecked(!isChecked)}>
+            <div className={`mt-1 flex-shrink-0 w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${isChecked ? 'bg-violet-500 border-violet-500' : 'border-slate-600 group-hover:border-violet-400'}`}>
+                {isChecked && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                )}
+            </div>
+            <span className={`text-sm transition-all duration-200 ${isChecked ? 'text-slate-500 line-through' : 'text-slate-200'}`}>
+                {children}
+            </span>
+        </div>
+    );
+};
 
 const ThinkingIndicator: React.FC<{ lang: string }> = ({ lang }) => {
     const [step, setStep] = React.useState(0);
@@ -126,7 +145,19 @@ const Message: React.FC<MessageProps> = ({ message, audioState, onPlayAudio, lan
                 )}
                 <div className="markdown-body prose prose-invert prose-sm max-w-none prose-p:my-6 prose-headings:my-8 prose-li:my-3 prose-ul:my-6 prose-ol:my-6 leading-relaxed">
                    {message.content ? (
-                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                        <ReactMarkdown 
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                li: ({ children, checked, ...props }: any) => {
+                                    if (checked !== null && checked !== undefined) {
+                                        return <ChecklistItem checked={checked}>{children}</ChecklistItem>;
+                                    }
+                                    return <li {...props}>{children}</li>;
+                                }
+                            }}
+                        >
+                            {message.content}
+                        </ReactMarkdown>
                    ) : (
                         <ThinkingIndicator lang={lang} />
                    )}

@@ -34,6 +34,10 @@ const getSystemInstruction = (language: Language, agentType?: string): string =>
 - **30% Ruling**: Explain the 2026 scaling down (30% -> 27% transitions).
 - **Vakantiegeld**: Confirm mandatory 8% gross annual salary.
 - **Borg (Deposit)**: Return within 14 days (if no damage).
+- **Interactive Checklists**: When providing a step-by-step guide or a list of requirements, use the following format to create an interactive checklist:
+    - Use \`[ ]\` for unchecked items (e.g., \`[ ] Register at the KVK\`).
+    - Use \`[x]\` for items that are typically already done or mandatory (e.g., \`[x] Have a valid ID\`).
+    - Encourage the user to "check off" these items as they complete them.
 
 **Formatting Rules:**
 - **NO MARKDOWN HEADERS (###)**: Use emojis and bold text for section titles (e.g., ⚖️ **Summary of the Law**).

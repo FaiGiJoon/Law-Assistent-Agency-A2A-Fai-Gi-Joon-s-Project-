@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations, Language } from '../lib/i18n';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, isVoice?: boolean) => void;
   isLoading: boolean;
   lang: Language;
 }
@@ -33,19 +33,19 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, lang })
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const t = useTranslations(lang);
   
+  const handleFinalTranscript = useCallback((transcript: string) => {
+    if (transcript.trim() && !isLoading) {
+      onSendMessage(transcript, true);
+      setText('');
+    }
+  }, [onSendMessage, isLoading]);
+
   const {
       isListening,
       startListening,
       stopListening,
-      finalTranscript,
       isSupported,
-  } = useSpeechRecognition({ lang });
-
-  useEffect(() => {
-    if (finalTranscript) {
-        setText(prev => (prev ? prev + ' ' : '') + finalTranscript);
-    }
-  }, [finalTranscript]);
+  } = useSpeechRecognition({ lang, onFinalTranscript: handleFinalTranscript });
 
   useEffect(() => {
     const textarea = textareaRef.current;

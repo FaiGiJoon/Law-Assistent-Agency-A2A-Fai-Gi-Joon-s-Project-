@@ -31,7 +31,7 @@ function App() {
 
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 
-  const handleSendMessage = useCallback(async (inputText: string) => {
+  const handleSendMessage = useCallback(async (inputText: string, isVoice: boolean = false) => {
     if (!inputText.trim() || isLoading || !chatRef.current) return;
 
     setIsLoading(true);
@@ -77,6 +77,11 @@ function App() {
                 }
                 return newMessages;
             });
+        }
+
+        // Auto-play if sent via voice
+        if (isVoice && fullResponse) {
+            handlePlayAudio(modelMessageId, fullResponse);
         }
     } catch (err) {
         console.error(err);
@@ -170,6 +175,7 @@ function App() {
         setLang={setLang}
         hasMessages={hasMessages}
         onResetChat={handleResetChat}
+        messages={messages}
       />
       <main className="flex-1 overflow-hidden">
         <ChatView 

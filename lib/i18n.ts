@@ -85,6 +85,11 @@ const translations = {
     successNotice: "(This is a demonstration. No real appointment has been made.)",
     closeButton: "Close",
     mainMenu: "Main Menu",
+    downloadPdf: "Download Legal Summary",
+    voiceInput: "Voice Input",
+    voiceListening: "Listening...",
+    voiceError: "Voice recognition failed. Please try again.",
+    checklistTitle: "Legal Checklist",
   },
   nl: {
     headerTitle: "Nederlands Recht AI",
@@ -168,6 +173,11 @@ const translations = {
     successNotice: "(Dit is een demonstratie. Er is geen echte afspraak gemaakt.)",
     closeButton: "Sluiten",
     mainMenu: "Hoofdmenu",
+    downloadPdf: "Download Juridische Samenvatting",
+    voiceInput: "Spraakinvoer",
+    voiceListening: "Aan het luisteren...",
+    voiceError: "Spraakherkenning mislukt. Probeer het opnieuw.",
+    checklistTitle: "Juridische Checklist",
   }
 };
 
