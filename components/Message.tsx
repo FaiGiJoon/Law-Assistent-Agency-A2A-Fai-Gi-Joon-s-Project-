@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { ChatMessage } from '../types';
 import { MessageRole } from '../types';
 
@@ -68,18 +69,6 @@ const ThinkingIndicator: React.FC<{ lang: string }> = ({ lang }) => {
     );
 };
 
-// Basic markdown-to-HTML renderer to avoid external dependencies in this snippet.
-const SimpleMarkdown: React.FC<{ content: string }> = ({ content }) => {
-    const formattedContent = content
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`([^`]+)`/g, '<code class="bg-slate-800/50 text-violet-300 px-1 py-0.5 rounded text-sm">$1</code>')
-        .replace(/(\n\s*-\s)/g, '<br/>&bull;&nbsp;')
-        .replace(/\n/g, '<br />');
-
-    return <div dangerouslySetInnerHTML={{ __html: formattedContent }} />;
-};
-
 interface AudioPlayerProps {
     messageId: string;
     content: string;
@@ -135,9 +124,9 @@ const Message: React.FC<MessageProps> = ({ message, audioState, onPlayAudio, lan
                         onPlayAudio={onPlayAudio}
                     />
                 )}
-                <div className="prose prose-invert prose-sm max-w-none prose-p:my-2 prose-headings:my-3">
+                <div className="markdown-body prose prose-invert prose-sm max-w-none prose-p:my-2 prose-headings:my-3 prose-li:my-1">
                    {message.content ? (
-                        <SimpleMarkdown content={message.content} />
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
                    ) : (
                         <ThinkingIndicator lang={lang} />
                    )}

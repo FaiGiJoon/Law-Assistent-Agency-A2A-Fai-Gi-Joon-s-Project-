@@ -1,6 +1,6 @@
 {
-  "name": "Dutch Law AI Legal Assistant",
-  "description": "A sophisticated Dutch Legal Tech platform providing interactive guidance on Consumer Rights, Housing (Wet Betaalbare Huur), Family Law, and 2025 Labor/Tax changes (Schijnzelfstandigheid, 30% ruling). Features include automated drafting of objection letters and legal calculators.",
+  "name": "Netherlands Legal Navigator",
+  "description": "An expert assistant specializing in Dutch civil, administrative, and housing law. Simplifies the complex Dutch legal landscape with B1-level clarity, automated drafting of objections, and 2026-ready legal calculators.",
   "requestFramePermissions": [
     "microphone"
   ]

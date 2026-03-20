@@ -4,7 +4,6 @@ import Message from './Message';
 import ChatInput from './ChatInput';
 import PromptSuggestions from './PromptSuggestions';
 import LegalHeadlines from './LegalHeadlines';
-import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations, Language } from '../lib/i18n';
 
 const LawBookIcon = () => (
@@ -16,24 +15,24 @@ const LawBookIcon = () => (
 
 interface ChatViewProps {
     lang: Language;
-    setLang: (lang: Language) => void;
     audioState: { playingMessageId: string | null; isLoading: boolean; };
     onPlayAudio: (messageId: string, text: string) => void;
     messages: ChatMessage[];
     isLoading: boolean;
     error: string | null;
     onSendMessage: (inputText: string) => void;
+    onAgentClick: (agentTitle: string, prompt: string) => void;
 }
 
 const ChatView: React.FC<ChatViewProps> = ({ 
     lang, 
-    setLang, 
     audioState, 
     onPlayAudio,
     messages,
     isLoading,
     error,
-    onSendMessage
+    onSendMessage,
+    onAgentClick
 }) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const t = useTranslations(lang);
@@ -44,12 +43,6 @@ const ChatView: React.FC<ChatViewProps> = ({
     }
   }, [messages, isLoading]);
 
-  const handleLanguageChange = (newLang: Language) => {
-    if (newLang !== lang) {
-      setLang(newLang);
-    }
-  };
-    
   const hasMessages = messages.length > 0;
 
   return (
@@ -58,8 +51,6 @@ const ChatView: React.FC<ChatViewProps> = ({
         {!hasMessages && !isLoading ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="glass-card p-8 rounded-3xl max-w-3xl w-full">
-                <LanguageSwitcher currentLang={lang} onLangChange={handleLanguageChange} />
-                <div className="my-6 border-b border-white/5 max-w-xl mx-auto"></div>
                 <LawBookIcon />
                 <h2 className="text-3xl font-bold text-white mt-4 tracking-tight">
                     {t.welcomeTitle}
@@ -69,7 +60,7 @@ const ChatView: React.FC<ChatViewProps> = ({
                 </p>
                 <PromptSuggestions onPromptClick={onSendMessage} lang={lang} />
                 <div className="my-8 border-b border-white/5 max-w-xl mx-auto"></div>
-                <LegalHeadlines onPromptClick={onSendMessage} lang={lang} />
+                <LegalHeadlines onPromptClick={onSendMessage} onAgentClick={onAgentClick} lang={lang} />
             </div>
           </div>
         ) : (

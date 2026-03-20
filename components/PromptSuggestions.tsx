@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations, Language } from '../lib/i18n';
 
 interface PromptSuggestion {
@@ -6,6 +6,18 @@ interface PromptSuggestion {
   prompt: string;
   icon: React.ReactElement;
 }
+
+const ArrowLeftIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"></path>
+    </svg>
+);
+
+const ArrowRightIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+    </svg>
+);
 
 const CarAccidentIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -142,6 +154,15 @@ interface PromptSuggestionsProps {
 const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptClick, lang }) => {
   const t = useTranslations(lang);
   const [shuffledSuggestions, setShuffledSuggestions] = useState<PromptSuggestion[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth / 2 : scrollLeft + clientWidth / 2;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     const allSuggestions = getSuggestions(t);
@@ -150,21 +171,43 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptClick, la
   }, [lang]);
 
   return (
-    <div>
-        <h3 className="text-center text-slate-400 mb-4 text-sm font-medium">{t.suggestionsTitle}</h3>
-        <div className="relative max-w-2xl mx-auto">
-            <div className="flex items-stretch space-x-4 overflow-x-auto pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-4 px-2">
+            <h3 className="text-slate-400 text-sm font-medium">{t.suggestionsTitle}</h3>
+            <div className="flex space-x-2">
+                <button 
+                    onClick={() => scroll('left')}
+                    className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    aria-label="Scroll suggestions left"
+                >
+                    <ArrowLeftIcon />
+                </button>
+                <button 
+                    onClick={() => scroll('right')}
+                    className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    aria-label="Scroll suggestions right"
+                >
+                    <ArrowRightIcon />
+                </button>
+            </div>
+        </div>
+        <div className="relative">
+            <div 
+                ref={scrollRef}
+                className="flex items-stretch space-x-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory" 
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
                 {shuffledSuggestions.map((suggestion) => (
                     <button
                         key={suggestion.title}
                         onClick={() => onPromptClick(suggestion.prompt)}
-                        className="glass-card p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-[#050505] w-40 flex-shrink-0 group"
+                        className="glass-card p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-[#050505] w-40 flex-shrink-0 group snap-center"
                         aria-label={`Start conversation about ${suggestion.title}`}
                     >
                         <div className="flex flex-col items-center text-center h-full">
                            <div className="text-violet-400 flex-shrink-0 group-hover:scale-110 transition-transform duration-300">{suggestion.icon}</div>
                            <p className="font-semibold text-slate-200 text-sm mt-3 flex-grow flex items-center justify-center">
-                                <span>{suggestion.title}</span>
+                                 <span>{suggestion.title}</span>
                            </p>
                         </div>
                     </button>

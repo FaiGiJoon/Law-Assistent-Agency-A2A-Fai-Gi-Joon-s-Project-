@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslations, Language } from '../lib/i18n';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const LawBookIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-violet-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -16,13 +17,13 @@ const BackIcon = () => (
 
 
 interface HeaderProps {
-    onBookAppointmentClick: () => void;
     lang: Language;
+    setLang: (lang: Language) => void;
     hasMessages: boolean;
     onResetChat: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onBookAppointmentClick, lang, hasMessages, onResetChat }) => {
+const Header: React.FC<HeaderProps> = ({ lang, setLang, hasMessages, onResetChat }) => {
     const t = useTranslations(lang);
 
     return (
@@ -43,12 +44,9 @@ const Header: React.FC<HeaderProps> = ({ onBookAppointmentClick, lang, hasMessag
                         {t.headerTitle} <span className="gradient-text">{t.headerSubtitle}</span>
                     </h1>
                 </div>
-                <button
-                    onClick={onBookAppointmentClick}
-                    className="accent-gradient text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-violet-500/20 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-black"
-                >
-                    {t.bookAppointment}
-                </button>
+                <div className="flex items-center">
+                    <LanguageSwitcher currentLang={lang} onLangChange={setLang} />
+                </div>
             </div>
         </header>
     );

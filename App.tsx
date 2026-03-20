@@ -12,8 +12,8 @@ import { MessageRole } from './types';
 import type { ChatMessage, Source } from './types';
 
 function App() {
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [lang, setLang] = useState<Language>('en');
+  const [activeAgent, setActiveAgent] = useState<string | undefined>(undefined);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
@@ -29,16 +29,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const chatRef = useRef<Chat | null>(null);
 
-  useEffect(() => {
-    // Re-initialize chat when language changes
-    chatRef.current = createChat(lang);
-    setMessages([]); // Clear chat history on language switch
-  }, [lang]);
-
-  const handleResetChat = useCallback(() => {
-    setMessages([]);
-    chatRef.current = createChat(lang);
-  }, [lang]);
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 
   const handleSendMessage = useCallback(async (inputText: string) => {
     if (!inputText.trim() || isLoading || !chatRef.current) return;
@@ -97,6 +88,29 @@ function App() {
     }
   }, [isLoading, lang]);
 
+  useEffect(() => {
+    // Re-initialize chat when language or agent changes
+    chatRef.current = createChat(lang, activeAgent);
+    setMessages([]); // Clear chat history on language or agent switch
+  }, [lang, activeAgent]);
+
+  useEffect(() => {
+    if (pendingPrompt && chatRef.current) {
+      handleSendMessage(pendingPrompt);
+      setPendingPrompt(null);
+    }
+  }, [pendingPrompt, handleSendMessage]);
+
+  const handleResetChat = useCallback(() => {
+    setMessages([]);
+    chatRef.current = createChat(lang, activeAgent);
+    setActiveAgent(undefined);
+  }, [lang, activeAgent]);
+
+  const handleAgentClick = useCallback((agentTitle: string, prompt: string) => {
+    setActiveAgent(agentTitle);
+    setPendingPrompt(prompt);
+  }, []);
 
   const stopCurrentAudio = useCallback(() => {
       if (audioSourceRef.current) {
@@ -153,28 +167,23 @@ function App() {
     <div className="flex flex-col h-screen font-sans bg-[#050505] text-slate-100">
       <Header 
         lang={lang}
-        onBookAppointmentClick={() => setIsBookingModalOpen(true)} 
+        setLang={setLang}
         hasMessages={hasMessages}
         onResetChat={handleResetChat}
       />
       <main className="flex-1 overflow-hidden">
         <ChatView 
           lang={lang} 
-          setLang={setLang}
           audioState={audioState}
           onPlayAudio={handlePlayAudio}
           messages={messages}
           isLoading={isLoading}
           error={error}
           onSendMessage={handleSendMessage}
+          onAgentClick={handleAgentClick}
         />
       </main>
       <Footer lang={lang} />
-      <BookingModal 
-        isOpen={isBookingModalOpen} 
-        onClose={() => setIsBookingModalOpen(false)}
-        lang={lang}
-      />
     </div>
   );
 }
