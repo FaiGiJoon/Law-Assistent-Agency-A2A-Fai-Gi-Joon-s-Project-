@@ -124,7 +124,7 @@ const Message: React.FC<MessageProps> = ({ message, audioState, onPlayAudio, lan
                         onPlayAudio={onPlayAudio}
                     />
                 )}
-                <div className="markdown-body prose prose-invert prose-sm max-w-none prose-p:my-2 prose-headings:my-3 prose-li:my-1">
+                <div className="markdown-body prose prose-invert prose-sm max-w-none prose-p:my-6 prose-headings:my-8 prose-li:my-3 prose-ul:my-6 prose-ol:my-6 leading-relaxed">
                    {message.content ? (
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                    ) : (

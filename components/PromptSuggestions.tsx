@@ -122,6 +122,36 @@ const WillIcon = () => (
     </svg>
 );
 
+const PrivacyAtWorkIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+    </svg>
+);
+
+const SmallClaimsIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v20"></path>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+    </svg>
+);
+
+const EnergyIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+    </svg>
+);
+
+const TransportIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="7" y="5" width="10" height="12" rx="2"></rect>
+        <path d="M7 13h10"></path>
+        <path d="M9 17v2"></path>
+        <path d="M15 17v2"></path>
+    </svg>
+);
+
 const getSuggestions = (t: any): PromptSuggestion[] => [
   { title: t.suggestion1Title, prompt: t.suggestion1Prompt, icon: <CarAccidentIcon /> },
   { title: t.suggestion2Title, prompt: t.suggestion2Prompt, icon: <FamilyCourtIcon /> },
@@ -135,6 +165,10 @@ const getSuggestions = (t: any): PromptSuggestion[] => [
   { title: t.suggestion10Title, prompt: t.suggestion10Prompt, icon: <DebtCollectionIcon /> },
   { title: t.suggestion11Title, prompt: t.suggestion11Prompt, icon: <PrivacyIcon /> },
   { title: t.suggestion12Title, prompt: t.suggestion12Prompt, icon: <WillIcon /> },
+  { title: t.suggestion13Title, prompt: t.suggestion13Prompt, icon: <PrivacyAtWorkIcon /> },
+  { title: t.suggestion14Title, prompt: t.suggestion14Prompt, icon: <SmallClaimsIcon /> },
+  { title: t.suggestion15Title, prompt: t.suggestion15Prompt, icon: <EnergyIcon /> },
+  { title: t.suggestion16Title, prompt: t.suggestion16Prompt, icon: <TransportIcon /> },
 ];
 
 const shuffleArray = <T,>(array: T[]): T[] => {

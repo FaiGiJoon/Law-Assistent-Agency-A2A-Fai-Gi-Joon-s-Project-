@@ -111,6 +111,15 @@ const getAgents = (t: any): Agent[] => [
   },
 ];
 
+const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+};
+
 interface LegalHeadlinesProps {
   onPromptClick: (prompt: string) => void;
   onAgentClick: (agentTitle: string, prompt: string) => void;
@@ -119,8 +128,13 @@ interface LegalHeadlinesProps {
 
 const LegalHeadlines: React.FC<LegalHeadlinesProps> = ({ onPromptClick, onAgentClick, lang }) => {
   const t = useTranslations(lang);
-  const agents = getAgents(t);
+  const [shuffledAgents, setShuffledAgents] = React.useState<Agent[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const allAgents = getAgents(t);
+    setShuffledAgents(shuffleArray(allAgents));
+  }, [lang]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -159,7 +173,7 @@ const LegalHeadlines: React.FC<LegalHeadlinesProps> = ({ onPromptClick, onAgentC
         className="flex overflow-x-auto space-x-4 pb-6 scrollbar-hide snap-x snap-mandatory no-scrollbar"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {agents.map((agent, index) => (
+        {shuffledAgents.map((agent, index) => (
           <button
             key={index}
             onClick={() => onAgentClick(agent.title, agent.prompt)}

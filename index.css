@@ -35,3 +35,25 @@ body {
 .accent-gradient {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
 }
+
+/* Custom Markdown Spacing */
+.markdown-body p {
+  margin-bottom: 1.75rem !important;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  margin-top: 2.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.markdown-body ul, .markdown-body ol {
+  margin-bottom: 1.75rem !important;
+}
+
+.markdown-body li {
+  margin-bottom: 1rem !important;
+}
+
+.markdown-body li > p {
+  margin-bottom: 0.5rem !important;
+}
