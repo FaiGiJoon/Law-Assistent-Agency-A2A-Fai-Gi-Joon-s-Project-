@@ -34,7 +34,7 @@ const FamilyCourtIcon = () => (
 );
 
 const CheckCircleIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-emerald-400 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-violet-400 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
         <polyline points="22 4 12 14.01 9 11.01"></polyline>
     </svg>
@@ -96,18 +96,18 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
             case 'selection':
                 return (
                     <>
-                        <h2 className="text-2xl font-bold text-center text-white">{t.modalTitle}</h2>
-                        <p className="text-slate-400 text-center mt-2 mb-6">{t.modalSubtitle}</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h2 className="text-3xl font-bold text-center text-white tracking-tight">{t.modalTitle}</h2>
+                        <p className="text-slate-400 text-center mt-2 mb-8">{t.modalSubtitle}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {VIRTUAL_AGENTS.map(agent => (
                                 <button
                                     key={agent.id}
                                     onClick={() => handleAgentSelect(agent)}
-                                    className="bg-slate-700/60 p-6 rounded-lg text-center hover:bg-slate-600/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                                    className="glass-card p-8 rounded-3xl text-center hover:bg-white/10 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-violet-500"
                                 >
-                                    <div className="text-emerald-400 flex justify-center">{agent.icon}</div>
-                                    <h3 className="font-semibold text-slate-100 mt-2">{agent.name}</h3>
-                                    <p className="text-xs text-slate-400 mt-1">{agent.description}</p>
+                                    <div className="text-violet-400 flex justify-center group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
+                                    <h3 className="font-bold text-white mt-4 text-lg">{agent.name}</h3>
+                                    <p className="text-sm text-slate-400 mt-2 leading-relaxed">{agent.description}</p>
                                 </button>
                             ))}
                         </div>
@@ -117,27 +117,27 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
                 if (!selectedAgent) return null;
                 return (
                      <>
-                        <h2 className="text-2xl font-bold text-center text-white">{t.confirmTitle}</h2>
-                        <div className="bg-slate-700/60 p-6 rounded-lg my-6 text-center">
-                             <div className="text-emerald-400 flex justify-center">{selectedAgent.icon}</div>
-                             <h3 className="font-semibold text-slate-100 mt-4 text-lg">{selectedAgent.name}</h3>
-                             <p className="text-sm text-slate-400 mt-1">{selectedAgent.description}</p>
+                        <h2 className="text-3xl font-bold text-center text-white tracking-tight">{t.confirmTitle}</h2>
+                        <div className="glass-card p-8 rounded-3xl my-8 text-center">
+                             <div className="text-violet-400 flex justify-center scale-110">{selectedAgent.icon}</div>
+                             <h3 className="font-bold text-white mt-6 text-xl">{selectedAgent.name}</h3>
+                             <p className="text-base text-slate-400 mt-2 leading-relaxed">{selectedAgent.description}</p>
                         </div>
-                        <p className="text-slate-400 text-center text-sm">{t.confirmNotice}</p>
-                        <div className="flex justify-center space-x-4 mt-6">
-                            <button onClick={() => setStep('selection')} className="bg-slate-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-slate-500 transition-colors">{t.backButton}</button>
-                            <button onClick={handleConfirm} className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-500 transition-colors">{t.confirmButton}</button>
+                        <p className="text-slate-500 text-center text-sm max-w-sm mx-auto">{t.confirmNotice}</p>
+                        <div className="flex justify-center space-x-4 mt-8">
+                            <button onClick={() => setStep('selection')} className="bg-white/5 text-white px-8 py-3 rounded-2xl font-semibold hover:bg-white/10 transition-colors border border-white/10">{t.backButton}</button>
+                            <button onClick={handleConfirm} className="accent-gradient text-white px-8 py-3 rounded-2xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-violet-500/20">{t.confirmButton}</button>
                         </div>
                     </>
                 );
              case 'success':
                 return (
-                    <div className="text-center">
+                    <div className="text-center py-8">
                         <CheckCircleIcon />
-                        <h2 className="text-2xl font-bold text-center text-white mt-4">{t.successTitle}</h2>
-                        <p className="text-slate-400 mt-2">{t.successMessage.replace('{agentName}', selectedAgent?.name || '')}</p>
-                        <p className="text-xs text-slate-500 mt-4">{t.successNotice}</p>
-                        <button onClick={handleClose} className="mt-6 bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-emerald-500 transition-colors">
+                        <h2 className="text-3xl font-bold text-center text-white mt-6 tracking-tight">{t.successTitle}</h2>
+                        <p className="text-slate-400 mt-3 text-lg leading-relaxed">{t.successMessage.replace('{agentName}', selectedAgent?.name || '')}</p>
+                        <p className="text-sm text-slate-500 mt-6">{t.successNotice}</p>
+                        <button onClick={handleClose} className="mt-10 accent-gradient text-white px-10 py-4 rounded-2xl font-bold hover:opacity-90 transition-all shadow-xl shadow-violet-500/20">
                             {t.closeButton}
                         </button>
                     </div>
@@ -148,19 +148,20 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
 
     return (
         <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
             onClick={handleClose}
             role="dialog"
             aria-modal="true"
         >
             <div 
-                className="bg-slate-800/80 border border-slate-700 rounded-2xl shadow-2xl p-8 w-full max-w-2xl"
+                className="bg-[#0b0b14] border border-white/5 rounded-[2.5rem] shadow-2xl p-10 w-full max-w-2xl relative overflow-hidden"
                 onClick={e => e.stopPropagation()}
             >
+                <div className="absolute top-0 left-0 w-full h-1 accent-gradient opacity-50"></div>
                 {renderContent()}
                 <button
                     onClick={handleClose}
-                    className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+                    className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors p-2 rounded-full hover:bg-white/5"
                     aria-label="Close"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

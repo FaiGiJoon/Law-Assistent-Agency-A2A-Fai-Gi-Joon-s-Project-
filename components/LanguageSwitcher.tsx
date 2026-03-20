@@ -20,10 +20,10 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang, onLang
           <button
             key={code}
             onClick={() => onLangChange(code)}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-[#050505] ${
               isActive
-                ? 'bg-emerald-600 text-white cursor-default'
-                : 'bg-slate-700/60 text-slate-300 hover:bg-slate-600/80'
+                ? 'accent-gradient text-white shadow-lg shadow-violet-500/20 cursor-default'
+                : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
             }`}
             disabled={isActive}
             aria-pressed={isActive}

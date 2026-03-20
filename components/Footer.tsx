@@ -9,8 +9,8 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ lang }) => {
     const t = useTranslations(lang);
     return (
-        <footer className="bg-slate-900/70 backdrop-blur-md border-t border-slate-700 p-3 text-center z-20">
-            <p className="text-xs text-slate-400">
+        <footer className="bg-[#050505]/80 backdrop-blur-xl border-t border-white/5 p-4 text-center z-20">
+            <p className="text-xs text-slate-500 max-w-2xl mx-auto leading-relaxed">
                 {t.footerDisclaimer}
             </p>
         </footer>

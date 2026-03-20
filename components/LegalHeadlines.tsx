@@ -41,7 +41,7 @@ const LegalHeadlines: React.FC<LegalHeadlinesProps> = ({ onPromptClick, lang }) 
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h3 className="text-center text-slate-300 mb-4 text-sm font-semibold tracking-wide">
+      <h3 className="text-center text-slate-500 mb-4 text-xs font-bold uppercase tracking-widest">
         {t.headlinesTitle}
       </h3>
       <div className="space-y-3">
@@ -49,11 +49,13 @@ const LegalHeadlines: React.FC<LegalHeadlinesProps> = ({ onPromptClick, lang }) 
           <button
             key={index}
             onClick={() => onPromptClick(headline.prompt)}
-            className="w-full bg-slate-800/50 p-3 rounded-lg text-left flex items-center hover:bg-slate-700/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+            className="w-full glass-card p-4 rounded-2xl text-left flex items-center hover:bg-white/5 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-violet-500"
             aria-label={`Ask about ${headline.title}`}
           >
-            <NewspaperIcon />
-            <span className="text-slate-200 text-sm">{headline.title}</span>
+            <div className="bg-violet-500/10 p-2 rounded-xl mr-4 group-hover:bg-violet-500/20 transition-colors">
+                <NewspaperIcon />
+            </div>
+            <span className="text-slate-200 text-sm font-medium">{headline.title}</span>
           </button>
         ))}
       </div>

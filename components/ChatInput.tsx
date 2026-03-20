@@ -72,35 +72,37 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, lang })
   };
 
   return (
-    <div className="bg-slate-900/70 backdrop-blur-md border-t border-slate-700 p-4">
-      <form onSubmit={handleSubmit} className="container mx-auto flex items-end space-x-3">
-        <textarea
-          ref={textareaRef}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={t.chatPlaceholder}
-          className="flex-1 bg-slate-700/50 border border-slate-600 rounded-xl p-3 resize-none text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 max-h-48 overflow-y-auto"
-          rows={1}
-          disabled={isLoading || isListening}
-        />
-        {isSupported && (
-            <button
-                type="button"
-                onClick={isListening ? stopListening : startListening}
-                disabled={isLoading}
-                className={`text-white rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${
-                    isListening ? 'bg-red-600 animate-pulse' : 'bg-slate-600 hover:bg-slate-500'
-                }`}
-                aria-label={isListening ? 'Stop listening' : 'Start listening'}
-            >
-                <MicIcon />
-            </button>
-        )}
+    <div className="bg-[#050505]/80 backdrop-blur-xl border-t border-white/5 p-4 pb-8">
+      <form onSubmit={handleSubmit} className="container mx-auto max-w-4xl flex items-end space-x-3">
+        <div className="flex-1 relative">
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t.chatPlaceholder}
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pr-12 resize-none text-white placeholder-slate-500 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 max-h-48 overflow-y-auto"
+              rows={1}
+              disabled={isLoading || isListening}
+            />
+            {isSupported && (
+                <button
+                    type="button"
+                    onClick={isListening ? stopListening : startListening}
+                    disabled={isLoading}
+                    className={`absolute right-3 bottom-3 h-8 w-8 flex items-center justify-center rounded-full transition-all duration-200 disabled:opacity-50 ${
+                        isListening ? 'text-red-500 animate-pulse' : 'text-slate-400 hover:text-white'
+                    }`}
+                    aria-label={isListening ? 'Stop listening' : 'Start listening'}
+                >
+                    <MicIcon />
+                </button>
+            )}
+        </div>
         <button
           type="submit"
           disabled={isLoading || !text.trim()}
-          className="bg-emerald-600 text-white rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center transition-all duration-200 enabled:hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+          className="accent-gradient text-white rounded-2xl h-14 w-14 flex-shrink-0 flex items-center justify-center transition-all duration-200 enabled:hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-500/20 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-black"
           aria-label="Send message"
         >
           {isLoading ? <LoadingSpinner /> : <SendIcon />}

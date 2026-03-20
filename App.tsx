@@ -1,11 +1,15 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ChatView from './components/ChatView';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import { Language } from './lib/i18n';
-import { generateSpeech } from './services/geminiService';
+import { generateSpeech, createChat, streamMessage } from './services/geminiService';
 import { decode, decodeAudioData } from './lib/audioUtils';
+import type { Chat } from '@google/genai';
+// FIX: `MessageRole` is an enum, which is used as a value at runtime (e.g., MessageRole.USER). It cannot be a type-only import.
+import { MessageRole } from './types';
+import type { ChatMessage, Source } from './types';
 
 function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -18,6 +22,81 @@ function App() {
       playingMessageId: string | null;
       isLoading: boolean;
   }>({ playingMessageId: null, isLoading: false });
+
+  // Chat state and logic lifted from ChatView
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const chatRef = useRef<Chat | null>(null);
+
+  useEffect(() => {
+    // Re-initialize chat when language changes
+    chatRef.current = createChat(lang);
+    setMessages([]); // Clear chat history on language switch
+  }, [lang]);
+
+  const handleResetChat = useCallback(() => {
+    setMessages([]);
+    chatRef.current = createChat(lang);
+  }, [lang]);
+
+  const handleSendMessage = useCallback(async (inputText: string) => {
+    if (!inputText.trim() || isLoading || !chatRef.current) return;
+
+    setIsLoading(true);
+    setError(null);
+    const userMessage: ChatMessage = { id: `user-${Date.now()}`, role: MessageRole.USER, content: inputText };
+    setMessages(prev => [...prev, userMessage]);
+    
+    let fullResponse = '';
+    const sources: Source[] = [];
+    const sourceMap = new Map<string, Source>();
+    const modelMessageId = `model-${Date.now()}`;
+    
+    try {
+        const stream = await streamMessage(chatRef.current, inputText);
+        
+        setMessages(prev => [...prev, { id: modelMessageId, role: MessageRole.MODEL, content: '' }]);
+
+        for await (const chunk of stream) {
+            const chunkText = chunk.text;
+            fullResponse += chunkText;
+
+            const groundingChunks = chunk.candidates?.[0]?.groundingMetadata?.groundingChunks;
+            if (groundingChunks) {
+                for (const chunk of groundingChunks) {
+                    if (chunk.web) {
+                       if (chunk.web.uri && !sourceMap.has(chunk.web.uri)) {
+                           const newSource = { uri: chunk.web.uri, title: chunk.web.title || chunk.web.uri };
+                           sourceMap.set(chunk.web.uri, newSource);
+                           sources.push(newSource);
+                       }
+                    }
+                }
+            }
+
+            setMessages(prev => {
+                const newMessages = [...prev];
+                const lastMessage = newMessages[newMessages.length - 1];
+                if (lastMessage && lastMessage.id === modelMessageId) {
+                    lastMessage.content = fullResponse;
+                    if (sources.length > 0) {
+                        lastMessage.sources = [...sources];
+                    }
+                }
+                return newMessages;
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
+        setError(`Failed to get response. ${errorMessage}`);
+        setMessages(prev => prev.filter(m => m.id !== modelMessageId));
+    } finally {
+        setIsLoading(false);
+    }
+  }, [isLoading, lang]);
+
 
   const stopCurrentAudio = useCallback(() => {
       if (audioSourceRef.current) {
@@ -68,11 +147,15 @@ function App() {
       }
   }, [audioState.playingMessageId, audioState.isLoading, stopCurrentAudio]);
 
+  const hasMessages = messages.length > 0;
+
   return (
-    <div className="flex flex-col h-screen font-sans bg-slate-900 text-slate-100">
+    <div className="flex flex-col h-screen font-sans bg-[#050505] text-slate-100">
       <Header 
         lang={lang}
         onBookAppointmentClick={() => setIsBookingModalOpen(true)} 
+        hasMessages={hasMessages}
+        onResetChat={handleResetChat}
       />
       <main className="flex-1 overflow-hidden">
         <ChatView 
@@ -80,6 +163,10 @@ function App() {
           setLang={setLang}
           audioState={audioState}
           onPlayAudio={handlePlayAudio}
+          messages={messages}
+          isLoading={isLoading}
+          error={error}
+          onSendMessage={handleSendMessage}
         />
       </main>
       <Footer lang={lang} />
